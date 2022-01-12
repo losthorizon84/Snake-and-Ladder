@@ -9,13 +9,11 @@ namespace Snake_and_Ladder.Services
     {
         private readonly ILogger<BaseProvider<Player>> _logger;
         private Queue<Player> _players;
-        private int _count;
 
         public PlayerProvider(ILogger<BaseProvider<Player>> logger) 
         {
             _logger = logger;
             _players = new Queue<Player>();
-            _count = 0;
         }
 
         public void Enqueue(Player player)
@@ -27,12 +25,11 @@ namespace Snake_and_Ladder.Services
         {
             _players.Enqueue(new Player(id, name));
             _logger.LogDebug($"Añadido el jugador {id}: {name}");
-            _count += 1;
         }
 
         public int Count()
         {
-            return _count;
+            return _players.Count;
         }
 
         public Player Next()
