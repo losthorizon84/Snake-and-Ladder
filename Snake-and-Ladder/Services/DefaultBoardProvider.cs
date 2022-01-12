@@ -29,31 +29,35 @@ namespace Snake_and_Ladder.Services
             _boardEntityProvider.Add(new Snake(head, tail));
         }
 
-        public void Move(Player player, int dice)
+        public int Move(int playerId, int currentPosition, int dice)
         {
-            player.Position += dice;
-
-            if (player.Position > 100)
+            int newPosition = currentPosition + dice;
+            int steps = dice;
+            if(newPosition > 100)
             {
-                player.Position -= dice;
+                steps = 0;
             }
-            else if (player.Position < 100)
+            else if (newPosition < 100)
             {
-                var entity = _boardEntityProvider.FindSingle(_ => _.Head == player.Position || _.Tail == player.Position);
+                var entity = _boardEntityProvider.FindSingle(_ => _.Head == newPosition || _.Tail == newPosition);
                 if (entity != null)
                 {
-                    if (entity is Snake && entity.Head == player.Position)
+                    if (entity is Snake && entity.Head == newPosition)
                     {
-                        _logger.LogWarning($"El jugador {player.Id} ha caído en una casilla con penalización [{player.Position}]. Retrocede a la casilla {entity.Tail}");
-                        player.Position = entity.Tail;
+                        _logger.LogWarning($"El jugador {playerId} ha caído en una casilla con penalización [{newPosition}]. Retrocede a la casilla {entity.Tail}");
+                        newPosition = entity.Tail;
                     }
-                    else if (entity is Ladder && entity.Tail == player.Position)
+                    else if (entity is Ladder && entity.Tail == newPosition)
                     {
-                        _logger.LogWarning($"El jugador {player.Id} ha caído en una casilla con ventaja [{player.Position}]. Avanza a la casilla {entity.Head}");
-                        player.Position = entity.Head;
-                    }
+                        _logger.LogWarning($"El jugador {playerId} ha caído en una casilla con ventaja [{newPosition}]. Avanza a la casilla {entity.Head}");
+                        newPosition = entity.Head;
+                    }                    
                 }
+                steps = newPosition - currentPosition;
             }
+
+
+            return steps;
         }
 
     }

@@ -15,13 +15,6 @@
         /// </summary>
         public string Name { get; private set; }
 
-        /// <summary>
-        /// Current position
-        /// </summary>
-        public int Position { get; set; } = 1;
-
-        public bool IsTheWinner { get; set; } = false;
-
         public Player(int id, string name)
         {
             Name = name;

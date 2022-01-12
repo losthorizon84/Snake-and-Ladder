@@ -10,18 +10,21 @@ namespace Snake_and_Ladder.Services
         private readonly IPlayerProvider _playerProvider;
         private readonly IDiceService _diceService;
         private readonly IBoardProvider _boardProvider;
+        private readonly IScoreBoard _scoreBoard;
 
-        public GameService(ILogger<IGameService> logger, IPlayerProvider playerProvider, IDiceService diceService, IBoardProvider boardProvider)
+        public GameService(ILogger<IGameService> logger, IPlayerProvider playerProvider, IDiceService diceService, IBoardProvider boardProvider, IScoreBoard scoreBoard)
         {
             _logger = logger;
             _playerProvider = playerProvider;
             _diceService = diceService;
             _boardProvider = boardProvider;
+            _scoreBoard = scoreBoard;
         }
 
         public void AddPlayer(string name, int id)
         {
             _playerProvider.Add(name, id);
+            _scoreBoard.StartPlayer(id);
         }
 
         public void CreateBoard()
@@ -68,14 +71,14 @@ namespace Snake_and_Ladder.Services
             {
                 var currentPlayer = _playerProvider.Next();
                 var dice = _diceService.Roll();
-                _boardProvider.Move(currentPlayer, dice);
+                var steps =_boardProvider.Move(currentPlayer.Id, _scoreBoard.GetPosition(currentPlayer.Id), dice);
+                _scoreBoard.SetPosition(currentPlayer.Id, steps);
 
-                gameIsOver = currentPlayer.Position == 100;
-                _logger.LogInformation($"El jugador {currentPlayer.Id}: {currentPlayer.Name} se mueve hacia la casilla {currentPlayer.Position}");
+                gameIsOver = _scoreBoard.IsWinner(currentPlayer.Id);
+                _logger.LogInformation($"El jugador {currentPlayer.Id}: {currentPlayer.Name} se mueve hacia la casilla {_scoreBoard.GetPosition(currentPlayer.Id)}");
 
                 if (gameIsOver)
                 {
-                    currentPlayer.IsTheWinner = true;
                     _logger.LogWarning($"El juego ha terminado. El vencedor ha sido el jugador {currentPlayer.Id}");
                 }
 

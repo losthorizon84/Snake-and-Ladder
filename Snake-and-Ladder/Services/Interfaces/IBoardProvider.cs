@@ -10,7 +10,7 @@ namespace Snake_and_Ladder.Services.Interfaces
 
         void AddLadder(int tail, int head);
 
-        void Move(Player player, int dice);        
+        int Move(int playerId, int currentPosition, int dice);        
 
     }
 }

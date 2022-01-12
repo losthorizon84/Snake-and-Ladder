@@ -27,6 +27,7 @@ namespace Snake_and_Ladder
                     services.AddScoped<IPlayerProvider, PlayerProvider>();
                     services.AddScoped<IBoardEntityProvider, BoardEntityProvider>();
                     services.AddScoped<IDiceService, DiceService>();
+                    services.AddScoped<IScoreBoard, ScoreBoard>();
                     services.AddScoped<Worker>();
                 });
     }
